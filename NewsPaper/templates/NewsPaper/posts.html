@@ -1,0 +1,77 @@
+{% extends 'layout/default.html' %}
+{% load custom_filters %}
+{% block title %}
+Posts
+{% endblock title %}
+
+{% block content %}
+    <h1>Все новости</h1>
+    <h3> Общее количество новостей на странице: {{ posts|length }} </h3>
+    <hr>
+    <h4>Сегодня: {{ time_now|date:'d M Y' }}</h4>
+    {% if posts %}
+        <table class = "table">
+            <tr>
+                <th scope="col">
+                    Заголовок
+                </th>
+                <th scope="col">
+                    Дата публикации
+                </th>
+                <th scope="col">
+                    Автор
+                </th>
+                 <th scope="col">
+                    Текст
+                </th>
+                  <th scope="col">
+                    Категория
+                </th>
+                <th scope="col">
+                </th>
+            </tr>
+
+        {% for post in posts %}
+
+            {{ person.anniversary.date|date:"M d, Y" }}
+            <tr>
+                <td>
+                    <a href="{% url 'news:post_detail' post.id %}">
+                    {{ post.title|censor }}
+                    </a>
+                </td>
+                <td>
+                    {{ post.created_at|date:'d.m.Y' }}
+                </td>
+                    <td>
+                    {{ post.author }}
+                </td>
+                <td>
+                    {{ post.text|truncatechars:50|censor }}
+                </td>
+                 {% for category in post.categories.all %}
+                <td>
+                  <a href="{% url 'news:category' category.id %}">
+                     {{ category.name }}
+                  </a></td>
+
+                {% endfor %}
+                <td>
+                    <a href="{% url 'news:post_update' post.id %}">
+                        Изменить
+                    </a>
+                    |
+                    <a href="{% url 'news:post_delete' post.id %}">
+                        Удалить
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+
+    {% include 'NewsPaper/parts/paginator.html' %}
+
+    {% else %}
+        <h2>Новостей нет!</h2>
+    {% endif %}
+{% endblock content %}

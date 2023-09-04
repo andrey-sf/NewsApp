@@ -1,0 +1,15 @@
+{% extends 'layout/default.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Подписка на категорию "{{ category }}"</h2>
+    <div class="mt-3">
+        {% if subscribe %}
+            <p>Вы еще не подписаны на эту категорию. Хотите подписаться?</p>
+            <a href="{% url 'news:subscribe' category.id %}" class="btn btn-primary">Подписаться</a>
+        {% else %}
+            <p>Вы уже подписаны на эту категорию. Хотите отписаться?</p>
+            <a href="{% url 'news:unsubscribe' pk=category.id %}" class="btn btn-danger">Отписаться</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

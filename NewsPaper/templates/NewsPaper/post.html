@@ -1,0 +1,14 @@
+{% extends 'layout/default.html' %}
+{% block title %}
+Post
+{% endblock title %}
+
+{% block content %}
+<a href="{% url 'news:posts' %}">Вернуться в новости</a>
+<h1>{{ post.title }}</h1>
+<hr>
+{{ post.created_at|date:'d-m-Y h:m' }}
+<hr>
+{{ post.text }}
+
+{% endblock content %}

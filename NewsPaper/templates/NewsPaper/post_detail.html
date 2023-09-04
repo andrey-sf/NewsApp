@@ -1,0 +1,31 @@
+{% extends 'layout/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+Статья
+{% endblock title %}
+
+{% block content %}
+<div class="card">
+ <div class="card-header">
+     <div class="btn-group">
+    <a href="{% url 'news:posts' %}" class="btn btn-primary btn-sm stretched-link">Вернуться к новостям</a>
+</div>
+   <h3>
+     {{ post.title|censor }}
+   </h3>
+   <div>
+     Дата создания: <span class="badge bg-info">{{ post.created_at|date:'d M Y года в G:i' }}</span>
+     Автор: <span class="badge bg-info">{{ post.author }}</span>
+       Категории:
+       {% for category in post.categories.all %}
+    <span class="badge bg-primary">{{ category.name }}</span>
+     {% endfor %}
+   </div>
+ </div>
+ <div class="card-body">
+   {{ post.text|censor }}
+
+
+
+{% endblock content %}

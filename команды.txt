@@ -1,0 +1,97 @@
+python manage.py shell
+from django.contrib.auth.models import User
+from NewsPaper.models import *
+
+
+# Создание пользователей
+user1 = User.objects.create_user(username='user1', password='password1')
+user2 = User.objects.create_user(username='user2', password='password2')
+
+# Создание объектов модели Author
+Author.objects.create(authorUser=user1, ratingAuthor=0)
+Author.objects.create(authorUser=user2, ratingAuthor=0)
+
+# Добавление категорий в модель Category
+Category.objects.create(name='Sport')
+Category.objects.create(name='Politics')
+Category.objects.create(name='Education')
+Category.objects.create(name='Technology')
+
+# Создание статей и новости
+Post.objects.create(author=Author.objects.get(authorUser=User.objects.get(username='user1')), post_type='AR', title='Article 1', text='Content 1', rating=0)
+Post.objects.create(author=Author.objects.get(authorUser=User.objects.get(username='user1')), post_type='AR', title='Article 2', text='Content 2', rating=0)
+Post.objects.create(author=Author.objects.get(authorUser=User.objects.get(username='user2')), post_type='NW', title='News 1', text='Content 3', rating=0)
+
+
+# Присвоение категорий статьям/новости
+p1 = Post.objects.get(pk=1)
+p2 = Post.objects.get(pk=2)
+p3 = Post.objects.get(pk=3)
+c1 = Category.objects.get(name='Sport')
+c2 = Category.objects.get(name='Politics')
+p1.categories.add(c1)
+p2.categories.add(c1, c2)
+p3.categories.add(c2)
+
+
+# Создание комментариев
+Comment.objects.create(commentUser=User.objects.get(username='user1'), commentPost=Post.objects.get(pk=1), text='Comment 1')
+Comment.objects.create(commentUser=User.objects.get(username='user1'), commentPost=Post.objects.get(pk=2), text='Comment 2')
+Comment.objects.create(commentUser=User.objects.get(username='user2'), commentPost=Post.objects.get(pk=3), text='Comment 3')
+Comment.objects.create(commentUser=User.objects.get(username='user2'), commentPost=Post.objects.get(pk=3), text='Comment 4')
+
+
+# Изменение лайков дизлайков статей/новостей и комментариев
+Post.objects.get(pk=1).like()
+Post.objects.get(pk=1).like()
+Post.objects.get(pk=2).like()
+Post.objects.get(pk=2).like()
+Post.objects.get(pk=2).like()
+Post.objects.get(pk=3).like()
+Post.objects.get(pk=3).like()
+Post.objects.get(pk=3).dislike()
+Post.objects.get(pk=3).dislike()
+Comment.objects.get(pk=1).like()
+Comment.objects.get(pk=3).like()
+Comment.objects.get(pk=3).like()
+
+
+# Обновление рейтингов пользователей
+Author.objects.get(authorUser=User.objects.get(username='user1')).update_rating()
+Author.objects.get(authorUser=User.objects.get(username='user2')).update_rating()
+
+
+# Вывод username и рейтинга лучшего пользователя
+best_author = Author.objects.order_by('-ratingAuthor').first()
+print(f"Лучший автор: {best_author.authorUser.username} (рейтинг: {best_author.ratingAuthor})")
+
+
+# Получаем лучшую статью на основе рейтинга
+best_post = Post.objects.order_by('-rating').first()
+
+# Получаем информацию о статье
+created_at = best_post.created_at
+author_username = best_post.author.authorUser.username
+rating = best_post.rating
+title = best_post.title
+preview = best_post.preview()
+
+
+# Выводим информацию о статье
+print(f"Дата добавления: {created_at}")
+print(f"Автор: {author_username}")
+print(f"Рейтинг: {rating}")
+print(f"Заголовок: {title}")
+print(f"Превью: {preview}")
+
+
+# Выводим информацию о комментариях
+comments = Comment.objects.filter(commentPost=best_post).values('created_at', 'commentUser__username', 'rating', 'text')
+print('Comments')
+for comment in comments:
+    print(comment)
+
+
+
+
+

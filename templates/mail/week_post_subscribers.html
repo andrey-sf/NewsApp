@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Еженедельная рассылка</title>
+</head>
+
+<body>
+    <h2>Здравствуйте {{ user }} ваша еженедельная рассылка </h2>
+    {% for post in weekly_news %}
+        <h4>Автор: {{ post.author }}</h4>
+        <a href="http://127.0.0.1:8000{% url 'news:post_detail' post.id %}"> <h3>{{ post.title }}</h3> </a>
+        <p>{{ post.text|truncatewords:20 }}</p>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,29 @@
+<header class="p-3 text-bg-dark">
+ <div class="container">
+   <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+     <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+       <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
+     </a>
+
+     <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+       <li><a href="{% url 'news:posts' %}" class="nav-link px-2 text-white">Новости</a></li>
+       <li><a href="{% url 'news:search' %}" class="nav-link px-2 text-white">Поиск</a></li>
+       <li><a href="{% url 'news:post_create' %}" class="nav-link px-2 text-white">Добавить</a></li>
+     </ul>
+       <div class="text-end">
+         {% if user.is_authenticated %}
+           <a class="btn btn-primary" href="/sign/">Профиль</a>
+           <a class="btn btn-primary" href="/accounts/logout/">Выйти</a>
+          {% if is_not_authors %}
+      <a class="btn btn-info" href="{% url 'sign:upgrade' %}">Хочу быть автором!</a>
+   {% else %}
+      <h3>Вы в группе "Авторы"</h3>
+   {% endif %}
+         {% else %}
+           <a class="btn btn-primary" href="/accounts/signup/">Регистрация</a>
+           <a class="btn btn-primary" href="/accounts/login/">Войти</a>
+         {% endif %}
+       </div>
+   </div>
+ </div>
+</header>
