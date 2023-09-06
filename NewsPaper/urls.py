@@ -3,6 +3,7 @@ from .views import PostsList, PostDetail, PostDetailView, PostCreateView, PostUp
     SearchList, PostCategoryView, unsubscribe_to_category_view, subscribe_to_category
 
 app_name = 'news'
+
 urlpatterns = [
     path('', PostsList.as_view(), name='posts'),
     path('search/', SearchList.as_view(), name='search'),

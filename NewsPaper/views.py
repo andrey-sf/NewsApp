@@ -11,6 +11,7 @@ from django.core.paginator import Paginator
 from .filters import PostFilter
 from .forms import PostForm
 from django.urls import reverse_lazy, resolve
+from django.core.cache import cache
 
 
 class PostsList(ListView):
@@ -63,6 +64,13 @@ class SearchList(ListView):
 class PostDetailView(DetailView):
     template_name = 'NewsPaper/post_detail.html'
     queryset = Post.objects.all()
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}',None)
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+        return obj
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -147,28 +155,28 @@ class PostCategoryView(LoginRequiredMixin, ListView):
 
 
 @login_required
-def subscribe_to_category(request,pk):
+def subscribe_to_category(request, pk):
     user = request.user
     category = Category.objects.get(id=pk)
     if not category.subscribers.filter(id=user.id).exists():
         category.subscribers.add(user.id)
         email = user.email
-        html_content = render_to_string (
+        html_content = render_to_string(
             'mail/subscribed.html',
             {
                 'categories': category,
-                'user' : user,
+                'user': user,
             },
         )
         msg = EmailMultiAlternatives(
             subject=f'{category} subscribe',
             body='',
             from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[email,], # это то же, что и recipients_list
+            to=[email, ],  # это то же, что и recipients_list
         )
-        msg.attach_alternative(html_content, "text/html") # добавляем html
+        msg.attach_alternative(html_content, "text/html")  # добавляем html
         try:
-            msg.send() # отсылаем
+            msg.send()  # отсылаем
         except Exception as e:
             print(e)
         return redirect(request.META.get('HTTP_REFERER'))
